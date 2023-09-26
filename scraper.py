@@ -4,6 +4,7 @@ import pymongo
 import datetime
 from pymongo import MongoClient
 from multiprocessing import Pool
+import time
 
 URL = "https://www.orsr.sk/hladaj_zmeny.asp"
 DOMENA = "https://www.orsr.sk/"
@@ -125,14 +126,8 @@ def parse(left_, right_, data):
 def fetch_decompose_add2db(link):
     global collection,links
 
-    text = ''
-    while text=='':
-        try:
-            text = requests.get(DOMENA+link, headers=headers).content
-        except:
-            # time.sleep(1)
-            continue
-    
+    text = requests.get(DOMENA+link, headers=headers).content
+   
     data = dict()
     document = bs4.BeautifulSoup(text, 'html.parser')
     tables = document.find('body').find_all("table",recursive=False)
@@ -172,7 +167,9 @@ except Exception as error:
 try:
     print("Sťahuje sa tabuľka...")
 
+
     html = requests.get(URL, headers=headers).content
+
     document = bs4.BeautifulSoup(html, 'html.parser')
     h3 = document.find('h3', class_='src')
     table = h3.find('table')
