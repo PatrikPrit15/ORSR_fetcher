@@ -9,6 +9,8 @@ import time
 URL = "https://www.orsr.sk/hladaj_zmeny.asp"
 DOMENA = "https://www.orsr.sk/"
 headers = {'Accept-Charset':  'utf8'}
+TIMEOUT = 1
+TIMEOUT_MAX = 30
 
 # funkcia ktorá parsne jednotlive typy dát
 def parse(left_, right_, data):
@@ -126,8 +128,23 @@ def parse(left_, right_, data):
 def fetch_decompose_add2db(link):
     global collection,links
 
-    text = requests.get(DOMENA+link, headers=headers).content
-   
+    ok=0
+    for _ in range(5):
+        try:
+            text = requests.get(DOMENA+link, headers=headers, timeout=TIMEOUT).content
+            ok=1
+            break
+        except:
+            pass
+    if ok==0:
+        try:
+            time.sleep(1)
+            text = requests.get(DOMENA+link, headers=headers, timeout=TIMEOUT_MAX).content
+        except Exception as e:
+            print(DOMENA+link, "sa nepodarilo stiahnuť(po 6 pokusoch), a bol vynechaný")
+            return
+
+
     data = dict()
     document = bs4.BeautifulSoup(text, 'html.parser')
     tables = document.find('body').find_all("table",recursive=False)

@@ -18,6 +18,7 @@
 
 Časy - python3-30s, pypy3-40s  (časy sú dosť premenlivé kvôli nespoľahlivosti/lagu serveru)
 
+
 ## Štart api:
 
 ```python3 api.py``` alebo ```python scraper.py```
